@@ -1,0 +1,434 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-base: #eceff4;
+  --bg-panel: linear-gradient(135deg, #ffffff 0%, #dfe4eb 100%); /* Light Aluminum Dashboard */
+  --text-primary: #1e293b; 
+  --text-secondary: #334155; 
+  --text-muted: #475569; 
+  
+  /* Professional Refined Physical Extrusions (Outset) with subtle depth */
+  --skeuo-shadow-out: 4px 4px 10px rgba(163, 177, 198, 0.35), -4px -4px 10px rgba(255, 255, 255, 0.8), inset 1px 1px 0px rgba(255,255,255,0.75);
+  --skeuo-shadow-out-sm: 2px 2px 6px rgba(163, 177, 198, 0.3), -2px -2px 6px rgba(255, 255, 255, 0.9), inset 0.5px 0.5px 0px rgba(255,255,255,0.9);
+  
+  /* Velvet Recesses (Inset Slots) */
+  --skeuo-shadow-inset: inset 3px 3px 7px rgba(0, 0, 0, 0.06), inset -3px -3px 7px rgba(255, 255, 255, 0.6);
+  --skeuo-shadow-inset-sm: inset 2px 2px 5px rgba(0, 0, 0, 0.05), inset -2px -2px 5px rgba(255, 255, 255, 0.7);
+  
+  --border-bevel: 1px solid #e2e8f0;
+  --border-bevel-subtle: 1px solid rgba(255, 255, 255, 0.6);
+  --divider: rgba(0, 0, 0, 0.06);
+  
+  /* Realistic text embossing */
+  --text-emboss: 1px 1px 0px #ffffff;
+  
+  /* Specular gloss overlay for plastic switches */
+  --gloss-overlay: linear-gradient(to bottom, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.08) 49%, rgba(0,0,0,0.04) 50%, rgba(0,0,0,0.15) 100%);
+  
+  --scrollbar-thumb: #cbd5e1;
+  --scrollbar-hover: #94a3b8;
+  --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231e293b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+}
+
+.dark {
+  --bg-base: #12151c;
+  --bg-panel: linear-gradient(135deg, #242b38 0%, #0d1016 100%); /* Obsidian/Titanium Dashboard */
+  --text-primary: #f8fafc; 
+  --text-secondary: #cbd5e1; 
+  --text-muted: #94a3b8; 
+  
+  --skeuo-shadow-out: 4px 4px 12px rgba(0, 0, 0, 0.3), -4px -4px 12px rgba(255, 255, 255, 0.03), inset 1px 1px 0px rgba(255,255,255,0.03);
+  --skeuo-shadow-out-sm: 2px 2px 6px rgba(0, 0, 0, 0.25), -2px -2px 6px rgba(255, 255, 255, 0.02);
+  
+  --skeuo-shadow-inset: inset 3px 3px 8px rgba(0, 0, 0, 0.35), inset -3px -3px 8px rgba(255, 255, 255, 0.01);
+  --skeuo-shadow-inset-sm: inset 2px 2px 5px rgba(0, 0, 0, 0.25), inset -2px -2px 5px rgba(255, 255, 255, 0.01);
+  
+  --border-bevel: 1px solid rgba(255, 255, 255, 0.03);
+  --border-bevel-subtle: 1px solid rgba(255, 255, 255, 0.01);
+  --divider: rgba(255, 255, 255, 0.03);
+  
+  --text-emboss: 0px -1px 1px #000000;
+  
+  --gloss-overlay: linear-gradient(to bottom, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.02) 49%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.45) 100%);
+  
+  --scrollbar-thumb: #334155;
+  --scrollbar-hover: #475569;
+  --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23f8fafc' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+html, body {
+  height: 100%;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+  /* Apply subtle realistic metallic text shadow universally for skeuo look */
+  text-shadow: var(--text-emboss);
+}
+
+/* ── Leaflet overrides ── */
+.leaflet-container {
+  background: var(--bg-base) !important;
+  font-family: 'Inter', sans-serif;
+}
+.leaflet-tile-pane { 
+  filter: contrast(1.0) saturate(1.05); 
+}
+.dark .leaflet-tile-pane { 
+  filter: invert(100%) hue-rotate(180deg) brightness(90%) contrast(95%) saturate(0.8); 
+}
+
+.custom-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Custom scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); box-shadow: inset 1px 0 3px rgba(0,0,0,0.1); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; box-shadow: inset 0 0 2px rgba(255,255,255,0.4); }
+::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); }
+
+/* ── Skeuomorphic Card Surfaces ── */
+.skeuo-card {
+  background: var(--bg-panel);
+  border-radius: 16px;
+  box-shadow: var(--skeuo-shadow-out);
+  border: var(--border-bevel);
+  position: relative;
+}
+
+/* Adds an inner highlight reflection on card edges for extreme reality */
+.skeuo-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 16px;
+  pointer-events: none;
+  border: var(--border-bevel-subtle);
+}
+
+/* ── Physical Grooved Channels ── */
+.skeuo-inset {
+  background: var(--bg-base);
+  box-shadow: var(--skeuo-shadow-inset);
+  border-radius: 12px;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  border-left: 1px solid rgba(0,0,0,0.08);
+}
+
+/* ── Brushed Aluminum Text ── */
+.gradient-text {
+  background: linear-gradient(to bottom, #1e293b 0%, #0f172a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.dark .gradient-text {
+  background: linear-gradient(to bottom, #ffffff 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── 3D Glossy Buttons ── */
+.btn-primary {
+  position: relative;
+  background: linear-gradient(to bottom, #2563eb, #1d4ed8);
+  color: #ffffff;
+  text-shadow: 0px -1px 1px rgba(0,0,0,0.4);
+  border: 1.5px solid #1d4ed8;
+  border-radius: 12px;
+  padding: 11px 20px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  box-shadow: 
+    0px 3px 6px rgba(0,0,0,0.12), 
+    inset 1px 1px 0px rgba(255,255,255,0.3);
+  overflow: hidden;
+}
+/* The spec reflection sheen */
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 100%;
+  background: var(--gloss-overlay);
+  pointer-events: none;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0px 5px 10px rgba(0,0,0,0.15), inset 1px 1px 0px rgba(255,255,255,0.4);
+}
+.btn-primary:active {
+  transform: translateY(0.5px);
+  box-shadow: inset 1.5px 1.5px 4px rgba(0,0,0,0.3);
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-secondary {
+  position: relative;
+  background: var(--bg-panel);
+  color: var(--text-primary);
+  border: var(--border-bevel);
+  border-radius: 12px;
+  padding: 11px 20px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: var(--skeuo-shadow-out-sm);
+  overflow: hidden;
+}
+.btn-secondary::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 100%;
+  background: var(--gloss-overlay);
+  pointer-events: none;
+}
+.btn-secondary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--skeuo-shadow-out);
+}
+.btn-secondary:active {
+  transform: translateY(1px);
+  box-shadow: var(--skeuo-shadow-inset-sm);
+}
+
+.btn-compare {
+  position: relative;
+  background: linear-gradient(to bottom, #0891b2, #0e7490);
+  color: #ffffff;
+  text-shadow: 0px -1px 1px rgba(0,0,0,0.4);
+  border: 1.5px solid #0e7490;
+  border-radius: 12px;
+  padding: 11px 20px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 
+    0px 3px 6px rgba(0,0,0,0.12), 
+    inset 1px 1px 0px rgba(255,255,255,0.3);
+  overflow: hidden;
+}
+.btn-compare::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 100%;
+  background: var(--gloss-overlay);
+  pointer-events: none;
+}
+.btn-compare:hover {
+  transform: translateY(-1px);
+  box-shadow: 0px 5px 10px rgba(0,0,0,0.15);
+}
+.btn-compare:active {
+  transform: translateY(0.5px);
+  box-shadow: inset 1.5px 1.5px 4px rgba(0,0,0,0.3);
+}
+
+/* ── Physical Stamped Form Controls ── */
+.custom-select {
+  background: var(--bg-base);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 10px;
+  color: var(--text-primary);
+  padding: 12px 16px;
+  width: 100%;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--skeuo-shadow-inset-sm);
+  appearance: none;
+  background-image: var(--select-arrow);
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  outline: none;
+  text-shadow: none;
+}
+.dark .custom-select {
+  border-color: rgba(255,255,255,0.02);
+}
+.custom-select option {
+  background: var(--bg-base);
+  color: var(--text-primary);
+}
+
+.custom-input {
+  background: var(--bg-base);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 10px;
+  color: var(--text-primary);
+  padding: 12px 16px;
+  width: 100%;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: var(--skeuo-shadow-inset-sm);
+  outline: none;
+  text-shadow: none;
+}
+.dark .custom-input {
+  border-color: rgba(255,255,255,0.02);
+}
+.custom-input::placeholder { 
+  color: var(--text-muted); 
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+/* ── Heavy Metal Track Range Slider ── */
+.custom-range {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  background: var(--bg-base);
+  box-shadow: inset 2px 2px 5px rgba(0,0,0,0.3), inset -1px -1px 1px rgba(255,255,255,0.1);
+  outline: none;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+.custom-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 5px; /* Square mechanical knob */
+  background: linear-gradient(135deg, #ffffff 0%, #a1a8b5 100%);
+  cursor: pointer;
+  border: 1.5px solid #788292;
+  box-shadow: 
+    1px 2px 4px rgba(0,0,0,0.3), 
+    inset 1px 1px 0px #ffffff;
+  position: relative;
+}
+.dark .custom-range::-webkit-slider-thumb {
+  background: linear-gradient(135deg, #475569 0%, #0f172a 100%);
+  border-color: #020617;
+  box-shadow: 
+    1px 2px 4px rgba(0,0,0,0.6), 
+    inset 1px 1px 0px rgba(255,255,255,0.1);
+}
+
+/* ── Thick Embossed Badges ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 11px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: var(--skeuo-shadow-out-sm);
+  border: 1px solid rgba(0,0,0,0.05);
+  text-shadow: none;
+}
+.dark .badge {
+  border-color: rgba(255,255,255,0.02);
+}
+.badge-blue   { background: linear-gradient(to bottom, #eff6ff, #dbeafe); color: #1d4ed8; }
+.badge-purple { background: linear-gradient(to bottom, #faf5ff, #f3e8ff); color: #7e22ce; }
+.badge-cyan   { background: linear-gradient(to bottom, #ecfeff, #cffafe); color: #0e7490; }
+.badge-green  { background: linear-gradient(to bottom, #f0fdf4, #dcfce7); color: #15803d; }
+.badge-amber  { background: linear-gradient(to bottom, #fffbeb, #fef3c7); color: #b45309; }
+
+.dark .badge-blue   { background: linear-gradient(to bottom, #1e3a8a, #172554); color: #93c5fd; }
+.dark .badge-purple { background: linear-gradient(to bottom, #581c87, #3b0764); color: #d8b4fe; }
+.dark .badge-cyan   { background: linear-gradient(to bottom, #164e63, #083344); color: #67e8f9; }
+.dark .badge-green  { background: linear-gradient(to bottom, #14532d, #052e16); color: #86efac; }
+.dark .badge-amber  { background: linear-gradient(to bottom, #78350f, #451a03); color: #fcd34d; }
+
+/* ── Glowing Digital Value (CRT Screen style) ── */
+.metric-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 800;
+  text-shadow: 0 0 10px currentColor; /* Digital glow! */
+  letter-spacing: -0.03em;
+}
+
+/* ── Glowing LED Indicator ── */
+.skeuo-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: relative;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.4);
+}
+.skeuo-led::after {
+  content: '';
+  position: absolute;
+  top: 1.5px; left: 1.5px;
+  width: 2.5px; height: 2.5px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 50%;
+}
+.led-green {
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981, inset 0 0 3px rgba(0,0,0,0.2);
+}
+.led-blue {
+  background: #3b82f6;
+  box-shadow: 0 0 8px #3b82f6, inset 0 0 3px rgba(0,0,0,0.2);
+}
+.led-red {
+  background: #ef4444;
+  box-shadow: 0 0 8px #ef4444, inset 0 0 3px rgba(0,0,0,0.2);
+}
+.led-off {
+  background: #64748b;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+}
+
+/* ── Physical Metal Nodes ── */
+.path-node {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-panel);
+  border-radius: 8px;
+  box-shadow: var(--skeuo-shadow-out-sm);
+  border: var(--border-bevel);
+  padding: 7px 14px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  color: var(--text-primary);
+  white-space: nowrap;
+  position: relative;
+  text-shadow: var(--text-emboss);
+}
+.path-node::after {
+  content: "";
+  position: absolute;
+  top: 0; left:0; right:0; height: 100%;
+  background: var(--gloss-overlay);
+  pointer-events: none;
+  border-radius: 8px;
+}
+
+/* ── Physical Traffic Glow ── */
+.traffic-low    { color: #059669; text-shadow: 0 0 6px rgba(5,150,105,0.4); }
+.traffic-medium { color: #d97706; text-shadow: 0 0 6px rgba(217,119,6,0.4); }
+.traffic-high   { color: #dc2626; text-shadow: 0 0 6px rgba(220,38,38,0.4); }
+
+.dark .traffic-low    { color: #34d399; text-shadow: 0 0 8px rgba(52,211,153,0.6); }
+.dark .traffic-medium { color: #fbbf24; text-shadow: 0 0 8px rgba(251,191,36,0.6); }
+.dark .traffic-high   { color: #f87171; text-shadow: 0 0 8px rgba(248,113,113,0.6); }
+

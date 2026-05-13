@@ -1,0 +1,15 @@
+/* Fix missing Leaflet marker icons in Next.js */
+.leaflet-city-label {
+  background: rgba(8, 13, 26, 0.85) !important;
+  border: 1px solid #1e2d4d !important;
+  border-radius: 6px !important;
+  color: #94a3b8 !important;
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  padding: 2px 6px !important;
+  box-shadow: none !important;
+  white-space: nowrap;
+}
+.leaflet-city-label::before {
+  display: none !important;
+}
