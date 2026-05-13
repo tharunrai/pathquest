@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import type { PathResult, CompareResult, EdgeData, AppMode } from "@/app/page";
 
-const API = "http://localhost:8000";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 const CITIES = [
   "Agra","Ahmedabad","Bangalore","Bhopal","Chennai",
