@@ -19,7 +19,7 @@ const CITIES = [
 const ALGORITHMS = [
   { value: "dijkstra", label: "Dijkstra's",       badge: "badge-blue",   desc: "Optimal, explores more nodes", color: "#3b82f6" },
   { value: "astar",    label: "A* Search",         badge: "badge-purple", desc: "Informed, faster than Dijkstra", color: "#a855f7" },
-  { value: "greedy",   label: "Greedy Best-First", badge: "badge-amber",  desc: "Fastest, not always optimal", color: "#f97316" },
+  { value: "prims",    label: "Prim's (MST Path)", badge: "badge-amber",  desc: "Path along Minimum Spanning Tree", color: "#f97316" },
 ];
 
 // ── traffic colour helper
@@ -35,8 +35,8 @@ type Props = {
   onResult: (r: PathResult | null) => void;
   onCompareResult: (r: CompareResult) => void;
   onEdgesUpdated: (edges: EdgeData[]) => void;
-  activeAlgo: "dijkstra" | "astar" | "greedy";
-  setActiveAlgo: (v: "dijkstra" | "astar" | "greedy") => void;
+  activeAlgo: "dijkstra" | "astar" | "prims";
+  setActiveAlgo: (v: "dijkstra" | "astar" | "prims") => void;
   mode: AppMode;
   setMode: (m: AppMode) => void;
 };
@@ -91,7 +91,7 @@ export default function Sidebar({
 
   async function compareAll() {
     if (start === end) { setError("Start and end must differ"); return; }
-    setLoading(true); setError(""); setMode("compare");
+    setLoading(true); setError("");
     try {
       const res = await fetch(`${API}/compare`, {
         method: "POST",
@@ -108,6 +108,23 @@ export default function Sidebar({
     }
   }
 
+  // Automatically recalculate whenever relevant state changes
+  useEffect(() => {
+    if (start === end) {
+      setError("Start and end must differ");
+      onResult(null);
+      return;
+    }
+    setError("");
+    if (mode === "single") {
+      findPath();
+    } else {
+      compareAll();
+    }
+    // We disable eslint rule because findPath and compareAll are guaranteed to use latest states
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [start, end, activeAlgo, mode]);
+
   async function applyTraffic() {
     if (!selectedEdge) return;
     const [from, to] = selectedEdge.split("|");
@@ -122,6 +139,13 @@ export default function Sidebar({
       const data = await r.json();
       setEdges(data.edges);
       onEdgesUpdated(data.edges);
+      
+      // Trigger automatic path recalculation after traffic updates
+      if (mode === "single") {
+        findPath();
+      } else {
+        compareAll();
+      }
     } catch {
       setError("Failed to update traffic");
     }
@@ -176,8 +200,11 @@ export default function Sidebar({
               <motion.button
                 key={a.value}
                 whileTap={{ scale: 0.97, translateY: isActive ? "0px" : "1px" }}
-                onClick={() => setActiveAlgo(a.value as any)}
-                className={`flex items-center gap-3 p-4 rounded-xl transition-all duration-150 text-left relative overflow-hidden border ${
+                onClick={() => {
+                  setActiveAlgo(a.value as any);
+                  setMode("single");
+                }}
+                className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-150 text-left relative overflow-hidden border ${
                   isActive 
                     ? "skeuo-inset bg-[var(--bg-base)] shadow-neu-in" 
                     : "bg-[var(--bg-panel)] shadow-neu-out hover:shadow-neu-out-sm"
@@ -226,12 +253,7 @@ export default function Sidebar({
           </motion.div>
         )}
 
-        <button className="btn-primary w-full flex items-center justify-center gap-2 py-3" onClick={findPath} disabled={loading}>
-          {loading && mode === "single" ? <Loader2 size={16} className="animate-spin" /> : <Navigation size={16} />}
-          Find Path
-        </button>
-
-        <button className="btn-compare w-full flex items-center justify-center gap-2 py-3" onClick={compareAll} disabled={loading}>
+        <button className="btn-compare w-full flex items-center justify-center gap-2 py-2.5" onClick={() => setMode("compare")} disabled={loading}>
           {loading && mode === "compare" ? <Loader2 size={16} className="animate-spin" /> : <GitCompare size={16} />}
           Compare All
         </button>
@@ -278,11 +300,11 @@ export default function Sidebar({
           className="custom-range mb-3"
           onChange={(e) => setTrafficVal(parseFloat(e.target.value))}
         />
-        <div className="flex justify-between text-[10px] font-extrabold text-[var(--text-muted)] mb-4 px-1">
+        <div className="flex justify-between text-xs font-extrabold text-[var(--text-muted)] mb-4 px-1">
           <span>FAST</span><span>NORMAL</span><span>JAM</span>
         </div>
 
-        <button className="btn-secondary w-full text-xs font-bold uppercase py-3 shadow-neu-out" onClick={applyTraffic}>
+        <button className="btn-secondary w-full text-xs font-bold uppercase py-2.5 shadow-neu-out" onClick={applyTraffic}>
           Apply Traffic
         </button>
       </Section>
@@ -329,7 +351,7 @@ export default function Sidebar({
           {[
             { color: "#1976d2", label: "Dijkstra path" },
             { color: "#7b1fa2", label: "A* path" },
-            { color: "#f57c00", label: "Greedy path" },
+            { color: "#f57c00", label: "Prim's path" },
             { color: "#388e3c", label: "Graph edges" },
             { color: "#d32f2f", label: "Heavy traffic" },
           ].map(({ color, label }) => (
@@ -354,15 +376,15 @@ function Section({
 }) {
   return (
     <div 
-      className="px-4 py-5 border-b transition-all duration-300 relative" 
+      className="px-4 py-3.5 border-b transition-all duration-300 relative" 
       style={{ borderBottom: "var(--border-bevel)" }}
     >
       {/* Realistic physical grooved highlighting line underneath the dark bevel border */}
       <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-white/60 dark:bg-white/5 pointer-events-none" />
       
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-3">
         <span className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)]" style={{ color: iconColor }}>{icon}</span>
-        <h3 className="text-[11px] font-black uppercase tracking-widest text-[var(--text-muted)]">{title}</h3>
+        <h3 className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">{title}</h3>
       </div>
       {children}
     </div>

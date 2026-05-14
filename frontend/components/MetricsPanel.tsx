@@ -10,7 +10,7 @@ export default function MetricsPanel({ result }: { result: PathResult }) {
   const algoColour: Record<string, string> = {
     "Dijkstra":          "#3b82f6",
     "A*":                "#a855f7",
-    "Greedy Best-First": "#f97316",
+    "Prim's (MST Path)": "#f97316",
   };
   const colour = algoColour[result.algorithm] ?? "#3b82f6";
 
@@ -31,7 +31,7 @@ export default function MetricsPanel({ result }: { result: PathResult }) {
           </div>
           <div>
             <p className="font-black text-[var(--text-primary)] text-base tracking-tight uppercase" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{result.algorithm}</p>
-            <p className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest mt-0.5">INSTRUMENT READOUT</p>
+            <p className="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest mt-0.5">INSTRUMENT READOUT</p>
           </div>
         </div>
 
@@ -70,7 +70,7 @@ export default function MetricsPanel({ result }: { result: PathResult }) {
 
         {/* Deeply Recessed Path Track */}
         <div className="flex items-center flex-wrap gap-2 skeuo-inset p-3.5 rounded-xl border" style={{ borderColor: "rgba(0,0,0,0.05)" }}>
-          <span className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest mr-1.5 font-mono flex items-center gap-1.5">
+          <span className="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest mr-1.5 font-mono flex items-center gap-1.5">
             <div className="skeuo-led led-green" /> Route Track:
           </span>
           <div className="flex flex-wrap items-center gap-2">
@@ -102,7 +102,7 @@ function Stat({
 }) {
   return (
     <div className="text-right py-1 flex-1">
-      <div className="flex items-center justify-end gap-1 text-[9px] font-black uppercase tracking-widest text-[var(--text-muted)] mb-0.5">
+      <div className="flex items-center justify-end gap-1 text-xs font-black uppercase tracking-widest text-[var(--text-muted)] mb-0.5">
         <span style={{ color: colour }}>{icon}</span>
         {label}
       </div>

@@ -66,8 +66,8 @@ def find_path(req: PathRequest):
         result = alg.dijkstra(req.start, req.end)
     elif algo == "astar":
         result = alg.astar(req.start, req.end)
-    elif algo == "greedy":
-        result = alg.greedy_best_first(req.start, req.end)
+    elif algo in ("greedy", "prims"):
+        result = alg.prims_path(req.start, req.end)
     else:
         raise HTTPException(status_code=400, detail=f"Unknown algorithm: '{req.algorithm}'")
 
@@ -86,7 +86,7 @@ def compare(req: CompareRequest):
     return {
         "dijkstra": alg.dijkstra(req.start, req.end),
         "astar":    alg.astar(req.start, req.end),
-        "greedy":   alg.greedy_best_first(req.start, req.end),
+        "prims":    alg.prims_path(req.start, req.end),
     }
 
 

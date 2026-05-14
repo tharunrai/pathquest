@@ -5,7 +5,7 @@ import "leaflet/dist/leaflet.css";
 export const metadata: Metadata = {
   title: "PathQuest AI — Smart Route Planner",
   description:
-    "Visualise Dijkstra, A* and Greedy Best-First pathfinding algorithms on a real Indian city graph.",
+    "Visualise Dijkstra, A* and Prim's pathfinding algorithms on a real Indian city graph.",
 };
 
 export default function RootLayout({

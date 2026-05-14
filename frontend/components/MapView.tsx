@@ -12,7 +12,7 @@ type Props = {
   comparePathsForMap: {
     dijkstra: string[];
     astar: string[];
-    greedy: string[];
+    prims: string[];
   } | null;
   edges: EdgeData[];
   onEdgesUpdated: (edges: EdgeData[]) => void;
@@ -22,7 +22,7 @@ type Props = {
 const ALGO_COLOURS = {
   dijkstra: "#3b82f6",
   astar:    "#a855f7",
-  greedy:   "#f97316",
+  prims:   "#f97316",
 };
 
 export default function MapView({
@@ -162,7 +162,7 @@ function drawGraph(
   nodes: { id: string; lat: number; lng: number }[],
   edges: EdgeData[],
   activePath: string[],
-  comparePaths: { dijkstra: string[]; astar: string[]; greedy: string[] } | null,
+  comparePaths: { dijkstra: string[]; astar: string[]; prims: string[] } | null,
   explorationOrder: string[],
 ) {
   const nodeMap = Object.fromEntries(nodes.map((n) => [n.id, n]));
@@ -210,7 +210,7 @@ function drawGraph(
 
   // ── Draw compare paths ──
   if (comparePaths) {
-    (["dijkstra", "astar", "greedy"] as const).forEach((algo) => {
+    (["dijkstra", "astar", "prims"] as const).forEach((algo) => {
       const path = comparePaths[algo];
       if (path.length < 2) return;
       const latlngs = path.map((c) => [nodeMap[c]?.lat, nodeMap[c]?.lng]).filter((p) => p[0]);
@@ -218,7 +218,7 @@ function drawGraph(
         color: ALGO_COLOURS[algo],
         weight: 4.5,
         opacity: 0.85,
-        dashArray: algo === "greedy" ? "6 3" : undefined,
+        dashArray: algo === "prims" ? "6 3" : undefined,
       }).addTo(layer);
     });
   }

@@ -19,7 +19,7 @@ export default function Header({
 }: Props) {
   return (
     <header
-      className="flex items-center justify-between px-6 py-3 z-50 flex-shrink-0 bg-[var(--bg-panel)] border-b transition-all duration-300"
+      className="flex items-center justify-between px-6 py-2 z-50 flex-shrink-0 bg-[var(--bg-panel)] border-b transition-all duration-300"
       style={{
         borderColor: "var(--border-bevel)",
         boxShadow: isDarkMode
@@ -44,7 +44,7 @@ export default function Header({
           <span className="font-black text-2xl tracking-tight text-[var(--text-primary)]" style={{ fontFamily: "'JetBrains Mono', monospace", letterSpacing: "-0.05em" }}>PathQuest</span>
           <span className="text-[var(--text-secondary)] font-black text-2xl tracking-tight ml-0.5" style={{ fontFamily: "'JetBrains Mono', monospace", opacity: 0.7 }}>.AI</span>
         </div>
-        <span className="badge badge-blue ml-4">V2.0 INSTRUMENT</span>
+        {/* <span className="badge badge-blue ml-4">V2.0 INSTRUMENT</span> */}
       </div>
 
       {/* Mechanical Mode Switcher */}
@@ -94,7 +94,7 @@ export default function Header({
         <div className="flex gap-3">
           <div className="flex items-center gap-2 bg-[var(--bg-base)] px-3.5 py-2 rounded-lg skeuo-inset border border-black/5">
             <div className="skeuo-led led-green" />
-            <span className="text-[10px] font-black tracking-widest uppercase font-mono text-[var(--text-secondary)]">API OK</span>
+            <span className="text-xs font-black tracking-widest uppercase font-mono text-[var(--text-secondary)]">API OK</span>
           </div>
         </div>
 

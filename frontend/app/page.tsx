@@ -23,7 +23,7 @@ export type PathResult = {
 export type CompareResult = {
   dijkstra: PathResult | null;
   astar: PathResult | null;
-  greedy: PathResult | null;
+  prims: PathResult | null;
 };
 
 export type NodeData = { id: string; lat: number; lng: number };
@@ -43,7 +43,7 @@ export default function Home() {
   const [compareResult, setCompareResult] = useState<CompareResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [edges, setEdges] = useState<EdgeData[]>([]);
-  const [activeAlgo, setActiveAlgo] = useState<"dijkstra" | "astar" | "greedy">("dijkstra");
+  const [activeAlgo, setActiveAlgo] = useState<"dijkstra" | "astar" | "prims">("dijkstra");
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   // Side effect for Dark Mode trigger
@@ -82,7 +82,7 @@ export default function Home() {
       ? {
           dijkstra: compareResult?.dijkstra?.path ?? [],
           astar: compareResult?.astar?.path ?? [],
-          greedy: compareResult?.greedy?.path ?? [],
+          prims: compareResult?.prims?.path ?? [],
         }
       : null;
 
@@ -143,7 +143,7 @@ export default function Home() {
                 animate={{ opacity: 1, x: "-50%", y: 0 }}
                 exit={{ opacity: 0, x: "-50%", y: 20 }}
                 transition={{ duration: 0.3 }}
-                className="absolute bottom-6 left-1/2 z-[1000] w-full max-w-4xl px-4"
+                className="absolute bottom-6 left-1/2 z-[1000] w-full max-w-3xl px-4"
               >
                 <ComparePanel compareResult={compareResult} />
               </motion.div>

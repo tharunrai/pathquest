@@ -101,40 +101,55 @@ def astar(start: str, end: str) -> dict | None:
     }
 
 
-def greedy_best_first(start: str, end: str) -> dict | None:
+def prims_path(start: str, end: str) -> dict | None:
     t0 = time.perf_counter()
     graph = build_graph()
 
-    def h(node: str) -> float:
-        c1, c2 = CITIES[node], CITIES[end]
-        return haversine(c1["lat"], c1["lng"], c2["lat"], c2["lng"])
+    visited = {start}
+    mst_graph = {c: [] for c in CITIES}
+    pq = []
+    
+    nodes_explored = 1
+    exploration_order = [start]
 
-    prev: dict = {start: None}
-    visited: set = set()
-    pq = [(h(start), start)]
-    nodes_explored = 0
-    exploration_order = []
+    # Initialize priority queue with edges from the start node
+    for v, w in graph[start]:
+        heapq.heappush(pq, (w, start, v))
 
+    # Build the Minimum Spanning Tree
     while pq:
-        _, u = heapq.heappop(pq)
-        if u in visited:
-            continue
-        visited.add(u)
-        nodes_explored += 1
-        exploration_order.append(u)
-        if u == end:
+        w, u, v = heapq.heappop(pq)
+        if v not in visited:
+            visited.add(v)
+            nodes_explored += 1
+            exploration_order.append(v)
+            
+            # Add edge to MST
+            mst_graph[u].append((v, w))
+            mst_graph[v].append((u, w))
+            
+            # Add new neighboring edges to the priority queue
+            for next_v, next_w in graph[v]:
+                if next_v not in visited:
+                    heapq.heappush(pq, (next_w, v, next_v))
+
+    # BFS to find the unique path in the MST from start to end
+    prev: dict = {start: None}
+    queue = [start]
+    while queue:
+        curr = queue.pop(0)
+        if curr == end:
             break
-        for v, w in graph[u]:
-            if v not in visited:
-                if v not in prev:
-                    prev[v] = u
-                heapq.heappush(pq, (h(v), v))
+        for nxt, _ in mst_graph[curr]:
+            if nxt not in prev and nxt != start:
+                prev[nxt] = curr
+                queue.append(nxt)
 
     path = _reconstruct_path(prev, start, end)
     if path is None:
         return None
 
-    # Compute actual cost of the greedy path
+    # Compute actual cost of the path
     total_cost = 0.0
     for i in range(len(path) - 1):
         for v, w in graph[path[i]]:
@@ -143,7 +158,7 @@ def greedy_best_first(start: str, end: str) -> dict | None:
                 break
 
     return {
-        "algorithm": "Greedy Best-First",
+        "algorithm": "Prim's (MST Path)",
         "path": path,
         "total_cost": round(total_cost, 2),
         "nodes_explored": nodes_explored,

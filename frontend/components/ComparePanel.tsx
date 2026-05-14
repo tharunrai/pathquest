@@ -8,7 +8,7 @@ import type { CompareResult, PathResult } from "@/app/page";
 const ALGOS = [
   { key: "dijkstra", label: "Dijkstra's", colour: "#3b82f6", badge: "badge-blue" },
   { key: "astar", label: "A* Search", colour: "#a855f7", badge: "badge-purple" },
-  { key: "greedy", label: "Greedy BFS", colour: "#f97316", badge: "badge-amber" },
+  { key: "prims", label: "Prim's (MST Path)", colour: "#f97316", badge: "badge-amber" },
 ] as const;
 
 export default function ComparePanel({ compareResult }: { compareResult: CompareResult }) {
@@ -21,20 +21,20 @@ export default function ComparePanel({ compareResult }: { compareResult: Compare
   const minTime = Math.min(...results.filter((r) => r.data).map((r) => r.data!.time_ms));
 
   return (
-    <div className="skeuo-card px-6 py-5 transition-all duration-300" style={{ background: "var(--bg-panel)" }}>
+    <div className="skeuo-card px-4 py-3.5 transition-all duration-300" style={{ background: "var(--bg-panel)" }}>
       {/* Header Bar */}
       <div 
         className="flex items-center gap-2.5 border-b pb-3 transition-all duration-300" 
         style={{ 
           borderColor: "var(--border-bevel)",
-          marginBottom: isMinimized ? "0px" : "20px"
+          marginBottom: isMinimized ? "0px" : "12px"
         }}
       >
         <div className="skeuo-led led-blue animate-pulse" />
         <h3 className="font-black text-[var(--text-primary)] text-sm tracking-tight uppercase font-mono">Analytical Benchmarks</h3>
         
         <div className="ml-auto flex items-center gap-3">
-          <span className="text-[10px] font-black tracking-widest text-[var(--text-muted)] uppercase px-3 py-1 bg-[var(--bg-base)] rounded-lg skeuo-inset border border-black/5">System Telemetry</span>
+          <span className="text-xs font-black tracking-widest text-[var(--text-muted)] uppercase px-3 py-1 bg-[var(--bg-base)] rounded-lg skeuo-inset border border-black/5">System Telemetry</span>
           
           {/* Mechanical Minimize Switch */}
           <motion.button
@@ -61,19 +61,19 @@ export default function ComparePanel({ compareResult }: { compareResult: Compare
         transition={{ duration: 0.3, ease: "easeInOut" }}
         className="overflow-hidden"
       >
-        <div className="grid grid-cols-3 gap-4 pb-1">
+        <div className="grid grid-cols-3 gap-3 pb-1">
           {results.map(({ key, label, colour, badge, data }) => (
             <motion.div
               key={key}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl p-4 bg-[var(--bg-panel)] border shadow-neu-out hover:shadow-neu-out-sm transition-all duration-150 relative overflow-hidden"
+              className="rounded-2xl p-3 bg-[var(--bg-panel)] border shadow-neu-out hover:shadow-neu-out-sm transition-all duration-150 relative overflow-hidden"
               style={{ borderColor: "var(--border-bevel)" }}
             >
               {/* Specular reflective shine on button faces */}
               <div className="absolute inset-0 bg-[var(--gloss-overlay)] pointer-events-none" />
 
-              <div className="flex items-center justify-between mb-3 relative z-10">
+              <div className="flex items-center justify-between mb-2 relative z-10">
                 <span className={`badge ${badge} font-black shadow-sm`}>{label}</span>
               </div>
 
@@ -99,11 +99,11 @@ export default function ComparePanel({ compareResult }: { compareResult: Compare
                   />
 
                   {/* Deep stamp path lists */}
-                  <div className="mt-3.5 pt-3 border-t skeuo-inset p-3 bg-[var(--bg-base)] border border-black/5" style={{ borderColor: "rgba(0,0,0,0.05)" }}>
-                    <p className="text-[9px] font-black text-[var(--text-muted)] uppercase tracking-widest mb-1.5 font-mono flex items-center gap-1.5">
+                  <div className="mt-2.5 pt-2 border-t skeuo-inset p-2 bg-[var(--bg-base)] border border-black/5" style={{ borderColor: "rgba(0,0,0,0.05)" }}>
+                    <p className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest mb-1 font-mono flex items-center gap-1">
                       <div className="skeuo-led led-green" /> Path Track
                     </p>
-                    <div className="flex flex-wrap gap-x-1.5 gap-y-0.5 max-h-20 overflow-y-auto pr-1 font-mono text-[10px]">
+                    <div className="flex flex-wrap gap-x-1.5 gap-y-0.5 max-h-20 overflow-y-auto pr-1 font-mono text-[11px]">
                       {data.path.map((c, i) => (
                         <span key={i} className="font-black leading-relaxed" style={{ color: colour }}>
                           {c}{i < data.path.length - 1 ? " →" : ""}
@@ -129,14 +129,14 @@ function CompareRow({
   label: string; value: string; best: boolean; colour: string;
 }) {
   return (
-    <div className="flex items-center justify-between py-1.5 border-b" style={{ borderColor: "var(--divider)" }}>
-      <span className="text-[11px] font-extrabold text-[var(--text-secondary)] uppercase tracking-wider">{label}</span>
+    <div className="flex items-center justify-between py-1 border-b" style={{ borderColor: "var(--divider)" }}>
+      <span className="text-xs font-extrabold text-[var(--text-secondary)] uppercase tracking-wider">{label}</span>
       <div className="flex items-center gap-2">
         {best && (
           <div className="skeuo-led led-green flex-shrink-0 drop-shadow-[0_0_4px_#10b981]" title="Optimal Metric" />
         )}
         <span
-          className="text-xs font-mono font-black tracking-tight"
+          className="text-sm font-mono font-black tracking-tight"
           style={{ 
             color: best ? (colour === "#f97316" ? "#ea580c" : colour) : colour,
             textShadow: best ? `0 0 8px ${colour}` : "none" 
