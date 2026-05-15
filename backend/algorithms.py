@@ -106,7 +106,7 @@ def prims_path(start: str, end: str) -> dict | None:
     graph = build_graph()
 
     visited = {start}
-    mst_graph = {c: [] for c in CITIES}
+    prev: dict = {start: None}
     pq = []
     
     nodes_explored = 1
@@ -121,29 +121,14 @@ def prims_path(start: str, end: str) -> dict | None:
         w, u, v = heapq.heappop(pq)
         if v not in visited:
             visited.add(v)
+            prev[v] = u  # Track the parent directly in the tree
             nodes_explored += 1
             exploration_order.append(v)
-            
-            # Add edge to MST
-            mst_graph[u].append((v, w))
-            mst_graph[v].append((u, w))
             
             # Add new neighboring edges to the priority queue
             for next_v, next_w in graph[v]:
                 if next_v not in visited:
                     heapq.heappush(pq, (next_w, v, next_v))
-
-    # BFS to find the unique path in the MST from start to end
-    prev: dict = {start: None}
-    queue = [start]
-    while queue:
-        curr = queue.pop(0)
-        if curr == end:
-            break
-        for nxt, _ in mst_graph[curr]:
-            if nxt not in prev and nxt != start:
-                prev[nxt] = curr
-                queue.append(nxt)
 
     path = _reconstruct_path(prev, start, end)
     if path is None:

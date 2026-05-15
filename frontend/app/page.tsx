@@ -45,6 +45,7 @@ export default function Home() {
   const [edges, setEdges] = useState<EdgeData[]>([]);
   const [activeAlgo, setActiveAlgo] = useState<"dijkstra" | "astar" | "prims">("dijkstra");
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [searchedNode, setSearchedNode] = useState<string | null>(null);
 
   // Side effect for Dark Mode trigger
   useEffect(() => {
@@ -107,6 +108,7 @@ export default function Home() {
           setActiveAlgo={setActiveAlgo}
           mode={mode}
           setMode={setMode}
+          onSearchNode={setSearchedNode}
         />
 
         {/* ── Map + Metrics ── */}
@@ -119,6 +121,7 @@ export default function Home() {
             explorationOrder={
               mode === "single" ? result?.exploration_order ?? [] : []
             }
+            searchedNode={searchedNode}
           />
 
           {/* Metrics overlay */}

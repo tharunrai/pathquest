@@ -6,7 +6,7 @@ echo ============================================
 echo.
 
 echo Starting FastAPI backend on http://localhost:8000 ...
-start "PathQuest Backend" cmd /k "cd /d "%~dp0backend" && uvicorn main:app --reload --port 8000"
+start "PathQuest Backend" cmd /k "cd /d "%~dp0backend" && python -m uvicorn main:app --reload --port 8000"
 
 timeout /t 2 /nobreak >nul
 

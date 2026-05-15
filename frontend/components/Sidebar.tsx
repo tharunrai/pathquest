@@ -39,11 +39,13 @@ type Props = {
   setActiveAlgo: (v: "dijkstra" | "astar" | "prims") => void;
   mode: AppMode;
   setMode: (m: AppMode) => void;
+  onSearchNode: (node: string | null) => void;
 };
 
 export default function Sidebar({
   loading, setLoading, onResult, onCompareResult,
   onEdgesUpdated, activeAlgo, setActiveAlgo, mode, setMode,
+  onSearchNode,
 }: Props) {
   const [start, setStart] = useState("Delhi");
   const [end, setEnd]     = useState("Mumbai");
@@ -152,7 +154,13 @@ export default function Sidebar({
   }
 
   async function doSearch() {
-    if (!searchQuery.trim()) return;
+    if (!searchQuery.trim()) {
+      setSearchResult(null);
+      onSearchNode(null);
+      return;
+    }
+    setSearchResult(null);
+    onSearchNode(null);
     try {
       const res = await fetch(`${API}/search-node`, {
         method: "POST",
@@ -161,8 +169,14 @@ export default function Sidebar({
       });
       const data = await res.json();
       setSearchResult(data);
+      if (data.found) {
+        onSearchNode(data.node);
+      } else {
+        onSearchNode(null);
+      }
     } catch {
       setError("Search failed");
+      onSearchNode(null);
     }
   }
 
@@ -316,7 +330,11 @@ export default function Sidebar({
             className="custom-input text-sm"
             placeholder="e.g. Mumbai"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setSearchResult(null);
+              onSearchNode(null);
+            }}
             onKeyDown={(e) => e.key === "Enter" && doSearch()}
           />
           <button className="btn-primary px-5 text-sm flex-shrink-0 shadow-neu-out" onClick={doSearch}>Go</button>

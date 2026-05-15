@@ -17,6 +17,7 @@ type Props = {
   edges: EdgeData[];
   onEdgesUpdated: (edges: EdgeData[]) => void;
   explorationOrder: string[];
+  searchedNode?: string | null;
 };
 
 const ALGO_COLOURS = {
@@ -26,7 +27,7 @@ const ALGO_COLOURS = {
 };
 
 export default function MapView({
-  activePath, comparePathsForMap, edges, onEdgesUpdated, explorationOrder,
+  activePath, comparePathsForMap, edges, onEdgesUpdated, explorationOrder, searchedNode = null,
 }: Props) {
   const mapRef    = useRef<any>(null);
   const layerRef  = useRef<any>(null);
@@ -107,7 +108,7 @@ export default function MapView({
       const layer = L.layerGroup().addTo(map);
       layerRef.current = layer;
 
-      drawGraph(L, layer, data.nodes, data.edges, [], null, []);
+      drawGraph(L, layer, data.nodes, data.edges, [], null, [], null);
     });
   }, []);
 
@@ -120,9 +121,9 @@ export default function MapView({
       layerRef.current = layer;
       
       // RENDER ANIMATION BUFFERS IN REALTIME
-      drawGraph(L, layer, nodes, edges, animPath, comparePathsForMap, animExploration);
+      drawGraph(L, layer, nodes, edges, animPath, comparePathsForMap, animExploration, searchedNode);
     });
-  }, [animPath, comparePathsForMap, edges, animExploration, nodes]);
+  }, [animPath, comparePathsForMap, edges, animExploration, nodes, searchedNode]);
 
   return (
     <div className="w-full h-full relative overflow-hidden">
@@ -164,6 +165,7 @@ function drawGraph(
   activePath: string[],
   comparePaths: { dijkstra: string[]; astar: string[]; prims: string[] } | null,
   explorationOrder: string[],
+  searchedNode: string | null,
 ) {
   const nodeMap = Object.fromEntries(nodes.map((n) => [n.id, n]));
 
@@ -234,27 +236,29 @@ function drawGraph(
 
   // ── Draw city terminal markers ──
   nodes.forEach((n) => {
+    const isSearched = searchedNode === n.id;
     const isOnPath = activePath.includes(n.id) ||
       (comparePaths && Object.values(comparePaths).some((p) => p.includes(n.id)));
     const isStart  = activePath[0] === n.id || (comparePaths && Object.values(comparePaths).some((p) => p[0] === n.id));
     const isEnd    = activePath.at(-1) === n.id || (comparePaths && Object.values(comparePaths).some((p) => p.at(-1) === n.id));
 
     const colour =
+      isSearched ? "#ec4899" : // Hot pink for searched node
       isStart ? "#10b981" :
       isEnd   ? "#ef4444" :
       isOnPath ? "#3b82f6" : "#64748b";
 
     L.circleMarker([n.lat, n.lng], {
-      radius: isStart || isEnd ? 7.5 : 4.5,
-      color: "#ffffff",
-      weight: 1.5,
+      radius: isSearched ? 10 : (isStart || isEnd ? 7.5 : 4.5),
+      color: isSearched ? "#fce7f3" : "#ffffff",
+      weight: isSearched ? 2.5 : 1.5,
       opacity: 0.9,
       fillColor: colour,
       fillOpacity: 1,
     }).addTo(layer).bindTooltip(
       `<div style="font-family:'JetBrains Mono',monospace;font-weight:900;font-size:11px;padding:1px 3px;color:var(--text-primary);">${n.id}</div>`,
       { 
-        permanent: isStart || isEnd, 
+        permanent: isStart || isEnd || isSearched, 
         direction: "top", 
         opacity: 0.9,
         offset: [0, -8],
